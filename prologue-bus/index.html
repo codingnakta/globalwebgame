@@ -114,7 +114,12 @@
     cursor: pointer; z-index: 4;
     user-select: none;
   }
-  .dlg .name { display: none; }           /* 화자 이름은 숨김 */
+  /* 화자 이름: name이 있는 줄에서만 대사 위에 작게 표시 (전화 상대 등) */
+  .dlg .name {
+    display: block; font-size: .6em; line-height: 1.3;
+    color: #B4C6ED; letter-spacing: .04em; margin-bottom: .1em;
+  }
+  .dlg .name:empty { display: none; }
   .dlg .text { white-space: pre-wrap; word-break: keep-all; }
   .dlg.inner .text { color: #B9BEC8; }    /* 속마음 = 회색 글씨 */
   .dlg .next {
@@ -366,7 +371,14 @@
     { ring: true, inner: true, text: '응? 이 아침에 누구지?' },   // ring: true → 벨소리 울림 (다음 줄에서 멈춤)
     { id: 'phone', event: 'phone', ring: true, hide: true, text: '' },          // 전화 화면: 응답/거절 선택
     { id: 'rejected', inner: true, text: '아… 받아야 될 것 같아.', next: 'phone' }, // 거절 → 이 대사 뒤 다시 전화 화면
-    { id: 'answered', text: '여보세요?' },                                       // 응답 → 통화 시작 (임시 대사)
+    { id: 'answered', text: '여보세요?' },                                       // 응답 → 통화 시작
+    { name: '황민현', text: '응 미림아' },                                      // name → 대사 위에 화자 이름 작게 표시 (전화 상대)
+    { name: '황민현', text: '오늘 학교 오지?' },
+    { text: '응… 지금 정문이야.' },
+    { name: '황민현', text: '다연쌤이 교무실로 빨리 오라시네' },
+    { text: '왜지...?' },
+    { name: '황민현', text: '모르지 뭐.. 우리 둘 만 취업 못해서 그런가?' },
+    { text: '그런 우울한 얘기는 하지 말자.. 알겠어 바로 올라갈게!' },
   ];
   const idxOf = id => LINES.findIndex(l => l.id === id);
 
