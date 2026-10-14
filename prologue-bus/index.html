@@ -104,7 +104,7 @@
     /* 테두리는 JS가 픽셀 원 알고리즘으로 그린 9-slice 이미지(border-image)로 그림 */
     border: calc(var(--px) * (var(--r) + 2)) solid transparent;
     border-radius: 0;
-    background: none;                     /* 안쪽 채움(검정 50%)도 border-image가 담당 */
+    background: none;                     /* 안쪽 채움(검정 70%)도 border-image가 담당 */
     padding: clamp(6px, .8vw, 14px) clamp(10px, 1.4vw, 22px);
     image-rendering: pixelated;
     color: #F3F5FA;
@@ -342,7 +342,7 @@
     };
     for (let y = 0; y < T; y++) for (let x = 0; x < T; x++) {
       let col = null;
-      if (inside(x, y, 2, R))          col = 'rgba(0,0,0,0.5)';   // 안쪽 채움
+      if (inside(x, y, 2, R))          col = 'rgba(0,0,0,0.7)';   // 안쪽 채움
       else if (inside(x, y, 1, R + 1)) col = '#F3F5FA';           // 흰 선
       else if (inside(x, y, 0, R + 2)) col = '#141C2A';           // 바깥 어두운 선
       if (col) { g.fillStyle = col; g.fillRect(x, y, 1, 1); }
