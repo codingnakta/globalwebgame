@@ -32,7 +32,8 @@ python -m http.server 5173 --directory prologue-bus
 5. 벨소리 + "응? 이 아침에 누구지?" → 전화 수신 화면 (거절 / 응답)
 6. 응답 → "여보세요?" → 황민현과 통화 (다연쌤이 교무실로 부름)
 7. 통화 끝 → 암전 → 학교 복도 → 취업 현황판 속마음 2줄
-8. 황민현 등장 → "미림아!" (여기부터 이어서 작성)
+8. 황민현 등장(오른쪽) + 배경 흐림 → "미림아!"
+9. 김미림 등장(왼쪽, 놀란 표정) → "깜짝이야!" (여기부터 이어서 작성)
 
 ## 구조
 
@@ -48,6 +49,7 @@ prologue-bus/
    ├─ phone-call.png           # 전화 수신 화면
    ├─ school-hallway.png       # 학교 복도
    ├─ minhyun.webp             # 복도의 황민현 (갈색 머리)
+   ├─ mirim-surprised.webp     # 복도의 김미림 (놀람)
    ├─ boy.png                  # 남학생 (금발, 아직 미사용)
    ├─ teacher-dayeon.png       # 다연쌤 (아직 미사용)
    ├─ bus-stop.wav             # 버스 안 환경음 (루프, 정문 장면부터는 꺼짐)
@@ -69,7 +71,7 @@ prologue-bus/
 { event: 'girlBack', hide: true, text: '', autoNext: 1200 }, // 1.2초 뒤 자동 진행
 ```
 
-이벤트 종류: `announce`(놀람+방송), `gate`(암전→정문), `girlBack`(뒷모습 등장), `phone`(전화 화면), `hallway`(암전→복도), `boyAppear`(황민현 등장).
+이벤트 종류: `announce`(놀람+방송), `gate`(암전→정문), `girlBack`(뒷모습 등장), `phone`(전화 화면), `hallway`(암전→복도), `boyAppear`(황민현 등장+배경 흐림), `girlAppear`(김미림 등장).
 
 ## 연출 조절 (CSS 변수)
 

@@ -161,16 +161,18 @@
   .hall img {
     width: 100%; height: 100%; object-fit: cover;
     image-rendering: pixelated; image-rendering: crisp-edges;
+    transition: filter .8s ease, transform .8s ease;
   }
-  /* 복도의 황민현: 화면 오른쪽 아래, 등장 시 살짝 밀려 들어오며 페이드 인 */
+  .hall.blur img { filter: blur(4px); transform: scale(1.03); }   /* 인물 등장 후 배경 흐림 (살짝 키워 가장자리 번짐 숨김) */
+  /* 복도의 인물: 화면 아래 정렬, 등장 시 살짝 밀려 들어오며 페이드 인 */
   .hall canvas {
-    position: absolute; left: 52%; right: 0; bottom: 0;
-    width: 48%; height: 92%;
+    position: absolute; bottom: 0; height: 92%; width: 48%;
     object-fit: contain; object-position: center bottom;
     image-rendering: pixelated; image-rendering: crisp-edges;
-    opacity: 0; transform: translateX(4%);
-    transition: opacity .7s ease, transform .7s ease;
+    opacity: 0; transition: opacity .7s ease, transform .7s ease;
   }
+  .hall #hallBoy  { left: 52%; transform: translateX(4%); }    /* 황민현: 오른쪽 */
+  .hall #hallGirl { left: 2%;  transform: translateX(-4%); }   /* 김미림: 왼쪽 */
   .hall canvas.show { opacity: 1; transform: translateX(0); }
   .stage.at-hall .hall { display: block; }
   .stage.at-hall .gate, .stage.at-hall .city, .stage.at-hall .bus, .stage.at-hall .haze { display: none; }
@@ -233,6 +235,7 @@
   <div class="hall">
     <img src="assets/school-hallway.png" alt="" onerror="this.style.display='none'">
     <canvas id="hallBoy"></canvas>
+    <canvas id="hallGirl"></canvas>
   </div>
   <div class="phone" id="phone">
     <div class="wrap">
@@ -338,6 +341,7 @@
   loadImage('assets/bus-girl-surprised.png').then(im => { sprites.surprised = keyOutWhite(im); }).catch(() => {});
   loadImage('assets/girl-back.png').then(im => { sprites.back = keyOutWhite(im); }).catch(() => {});
   loadImage('assets/minhyun.webp').then(im => { sprites.minhyun = keyOutWhite(im); }).catch(() => {});
+  loadImage('assets/mirim-surprised.webp').then(im => { sprites.mirimSurprised = keyOutWhite(im); }).catch(() => {});
 
   // ── 배경음: 첫 클릭/키 입력 후 재생, 버튼으로 음소거 토글 ──
   const bgm = document.getElementById('bgm');       // 버스 안 환경음 (내리면 멈춤)
@@ -424,7 +428,8 @@
     { inner: true, text: '취업 현황판이네..' },
     { inner: true, text: '나도 대기업 들어가서 저기에 이름 올리고싶다' },
     { event: 'boyAppear', hide: true, text: '', autoNext: 1000 },   // 황민현 등장 → 1초 뒤 자동 진행
-    { name: '황민현', text: '미림아!' },                              // (임시 대사, 여기부터 이어서 작성)
+    { name: '황민현', text: '미림아!' },
+    { event: 'girlAppear', name: '김미림', text: '깜짝이야!' },        // 미림 등장(왼쪽) + 대사. 민현은 그대로
   ];
   const idxOf = id => LINES.findIndex(l => l.id === id);
 
@@ -486,9 +491,11 @@
       document.getElementById('phone').classList.add('on');
     },
     boyAppear() {
-      const c = document.getElementById('hallBoy');
-      if (sprites.minhyun) { c.width = sprites.minhyun.width; c.height = sprites.minhyun.height; c.getContext('2d').drawImage(sprites.minhyun, 0, 0); }
-      requestAnimationFrame(() => c.classList.add('show'));   // 페이드 인
+      showSprite('hallBoy', sprites.minhyun);
+      document.querySelector('.hall').classList.add('blur');  // 인물 등장 후 배경 흐림
+    },
+    girlAppear() {
+      showSprite('hallGirl', sprites.mirimSurprised);
     },
     girlBack() {
       const c = document.getElementById('gateGirl');
@@ -496,6 +503,12 @@
       requestAnimationFrame(() => c.classList.add('show'));   // 페이드 인
     },
   };
+  // 캔버스에 스프라이트를 그리고 페이드 인
+  function showSprite(id, sp) {
+    const c = document.getElementById(id);
+    if (sp) { c.width = sp.width; c.height = sp.height; c.getContext('2d').drawImage(sp, 0, 0); }
+    requestAnimationFrame(() => c.classList.add('show'));
+  }
   const TYPE_MS = 45;   // 글자당 타이핑 속도(ms). 0이면 즉시 표시
 
   const dlg = document.getElementById('dlg');
