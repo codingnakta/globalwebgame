@@ -425,6 +425,8 @@
       transitioning = true;                                   // 전환 중 클릭 무시
       fade.classList.add('on');                               // 암전
       offBus = true;                                          // 내린 뒤엔 버스 환경음 다시 안 켬
+      if (!announce.paused) { announce.pause(); announce.currentTime = 0; }   // 안내 방송 중이면 끊기
+      duck(false);                                            // 방송 덕킹 해제 (음악 원래 볼륨으로)
       const fadeOut = setInterval(() => {                     // 암전 동안 버스 환경음 서서히 줄이기
         bgm.volume = Math.max(0, bgm.volume - 0.05);
         if (bgm.volume <= 0) { clearInterval(fadeOut); bgm.pause(); }
