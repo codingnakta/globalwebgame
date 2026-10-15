@@ -334,9 +334,10 @@
     if (muted || !music.paused) return;
     playBg();
   };
+  sndBtn.addEventListener('pointerdown', e => e.stopPropagation());   // 무대의 startAudio가 먼저 켜 버리는 것 방지
   sndBtn.addEventListener('click', e => {
     e.stopPropagation();
-    muted = !muted;
+    muted = !music.paused;                           // 나고 있으면 끄고, 아니면(처음·음소거 중) 켠다
     if (muted) { bgm.pause(); music.pause(); announce.pause(); ring.pause(); } else playBg();
     renderSnd();
   });
