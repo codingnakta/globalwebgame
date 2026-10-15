@@ -31,7 +31,8 @@ python -m http.server 5173 --directory prologue-bus
 4. 학교 정문 → 소녀 뒷모습 등장 → "아… 들어가기 싫어."
 5. 벨소리 + "응? 이 아침에 누구지?" → 전화 수신 화면 (거절 / 응답)
 6. 응답 → "여보세요?" → 황민현과 통화 (다연쌤이 교무실로 부름)
-7. 통화 끝 → 암전 → 학교 복도 (여기부터 이어서 작성)
+7. 통화 끝 → 암전 → 학교 복도 → 취업 현황판 속마음 2줄
+8. 황민현 등장 → "미림아!" (여기부터 이어서 작성)
 
 ## 구조
 
@@ -46,6 +47,9 @@ prologue-bus/
    ├─ girl-back.png            # 정문 앞 소녀 뒷모습
    ├─ phone-call.png           # 전화 수신 화면
    ├─ school-hallway.png       # 학교 복도
+   ├─ minhyun.webp             # 복도의 황민현 (갈색 머리)
+   ├─ boy.png                  # 남학생 (금발, 아직 미사용)
+   ├─ teacher-dayeon.png       # 다연쌤 (아직 미사용)
    ├─ bus-stop.wav             # 버스 안 환경음 (루프, 정문 장면부터는 꺼짐)
    ├─ kafka-on-the-shore.mp3   # 배경 음악 (루프, 장면 바뀌어도 계속)
    ├─ bus-announce.mp3         # 버스 안내 방송
@@ -65,7 +69,7 @@ prologue-bus/
 { event: 'girlBack', hide: true, text: '', autoNext: 1200 }, // 1.2초 뒤 자동 진행
 ```
 
-이벤트 종류: `announce`(놀람+방송), `gate`(암전→정문), `girlBack`(뒷모습 등장), `phone`(전화 화면), `hallway`(암전→복도).
+이벤트 종류: `announce`(놀람+방송), `gate`(암전→정문), `girlBack`(뒷모습 등장), `phone`(전화 화면), `hallway`(암전→복도), `boyAppear`(황민현 등장).
 
 ## 연출 조절 (CSS 변수)
 

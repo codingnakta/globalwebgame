@@ -162,6 +162,16 @@
     width: 100%; height: 100%; object-fit: cover;
     image-rendering: pixelated; image-rendering: crisp-edges;
   }
+  /* 복도의 황민현: 화면 오른쪽 아래, 등장 시 살짝 밀려 들어오며 페이드 인 */
+  .hall canvas {
+    position: absolute; left: 52%; right: 0; bottom: 0;
+    width: 48%; height: 92%;
+    object-fit: contain; object-position: center bottom;
+    image-rendering: pixelated; image-rendering: crisp-edges;
+    opacity: 0; transform: translateX(4%);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .hall canvas.show { opacity: 1; transform: translateX(0); }
   .stage.at-hall .hall { display: block; }
   .stage.at-hall .gate, .stage.at-hall .city, .stage.at-hall .bus, .stage.at-hall .haze { display: none; }
   .fade {
@@ -222,6 +232,7 @@
   </div>
   <div class="hall">
     <img src="assets/school-hallway.png" alt="" onerror="this.style.display='none'">
+    <canvas id="hallBoy"></canvas>
   </div>
   <div class="phone" id="phone">
     <div class="wrap">
@@ -326,6 +337,7 @@
   loadImage('assets/bus-girl.png').then(setBus).catch(() => {});
   loadImage('assets/bus-girl-surprised.png').then(im => { sprites.surprised = keyOutWhite(im); }).catch(() => {});
   loadImage('assets/girl-back.png').then(im => { sprites.back = keyOutWhite(im); }).catch(() => {});
+  loadImage('assets/minhyun.webp').then(im => { sprites.minhyun = keyOutWhite(im); }).catch(() => {});
 
   // ── 배경음: 첫 클릭/키 입력 후 재생, 버튼으로 음소거 토글 ──
   const bgm = document.getElementById('bgm');       // 버스 안 환경음 (내리면 멈춤)
@@ -411,6 +423,8 @@
     { event: 'hallway', hide: true, text: '', autoNext: 1500 },   // 암전 → 학교 복도 → 1.5초 뒤 자동 진행
     { inner: true, text: '취업 현황판이네..' },
     { inner: true, text: '나도 대기업 들어가서 저기에 이름 올리고싶다' },
+    { event: 'boyAppear', hide: true, text: '', autoNext: 1000 },   // 황민현 등장 → 1초 뒤 자동 진행
+    { name: '황민현', text: '미림아!' },                              // (임시 대사, 여기부터 이어서 작성)
   ];
   const idxOf = id => LINES.findIndex(l => l.id === id);
 
@@ -470,6 +484,11 @@
     phone() {
       choosing = true;                                        // 버튼을 누를 때까지 클릭/키 진행 차단
       document.getElementById('phone').classList.add('on');
+    },
+    boyAppear() {
+      const c = document.getElementById('hallBoy');
+      if (sprites.minhyun) { c.width = sprites.minhyun.width; c.height = sprites.minhyun.height; c.getContext('2d').drawImage(sprites.minhyun, 0, 0); }
+      requestAnimationFrame(() => c.classList.add('show'));   // 페이드 인
     },
     girlBack() {
       const c = document.getElementById('gateGirl');
