@@ -222,6 +222,7 @@
     <span class="next">▼</span>
   </div>
   <audio id="bgm" src="assets/bus-stop.wav" loop preload="auto"></audio>
+  <audio id="music" src="assets/kafka-on-the-shore.mp3" loop preload="auto"></audio>
   <audio id="announce" src="assets/bus-announce.mp3" preload="auto"></audio>
   <audio id="ring" src="assets/reflection.mp3" loop preload="auto"></audio>
   <button class="snd" id="sndBtn" title="소리 켜기/끄기" aria-label="소리 켜기/끄기">🔇</button>
@@ -312,19 +313,31 @@
   loadImage('assets/girl-back.png').then(im => { sprites.back = keyOutWhite(im); }).catch(() => {});
 
   // ── 배경음: 첫 클릭/키 입력 후 재생, 버튼으로 음소거 토글 ──
-  const bgm = document.getElementById('bgm');
+  const bgm = document.getElementById('bgm');       // 버스 안 환경음 (내리면 멈춤)
+  const music = document.getElementById('music');   // 배경 음악 (장면 바뀌어도 계속)
   const sndBtn = document.getElementById('sndBtn');
-  bgm.volume = 0.5;
+  const BGM_VOL = 0.5, MUSIC_VOL = 0.35;            // 기본 볼륨
+  const DUCK = 0.3;                                  // 방송·벨소리 동안 배경음 줄이는 비율
+  bgm.volume = BGM_VOL; music.volume = MUSIC_VOL;
   let muted = false;
-  const renderSnd = () => { sndBtn.textContent = (muted || bgm.paused) ? '🔇' : '🔊'; };
+  let offBus = false;                                // 버스에서 내렸으면 true → 버스 환경음 안 켬
+  const renderSnd = () => { sndBtn.textContent = (muted || music.paused) ? '🔇' : '🔊'; };
+  const playBg = () => {
+    if (!offBus) bgm.play().catch(() => {});        // 파일이 없거나 차단돼도 멈추지 않음
+    music.play().then(renderSnd).catch(() => {});
+  };
+  const duck = on => {                               // 방송·벨소리 동안 배경음 낮추기
+    bgm.volume = on ? BGM_VOL * DUCK : BGM_VOL;
+    music.volume = on ? MUSIC_VOL * DUCK : MUSIC_VOL;
+  };
   const startAudio = () => {
-    if (muted || !bgm.paused) return;
-    bgm.play().then(renderSnd).catch(() => {}); // 파일이 없거나 차단돼도 멈추지 않음
+    if (muted || !music.paused) return;
+    playBg();
   };
   sndBtn.addEventListener('click', e => {
     e.stopPropagation();
     muted = !muted;
-    if (muted) { bgm.pause(); announce.pause(); ring.pause(); } else bgm.play().catch(() => {});
+    if (muted) { bgm.pause(); music.pause(); announce.pause(); ring.pause(); } else playBg();
     renderSnd();
   });
   bgm.addEventListener('error', () => { sndBtn.title = '배경음 파일을 찾을 수 없습니다'; });
@@ -388,11 +401,11 @@
   function setRing(on) {
     if (on) {
       if (muted) return;
-      bgm.volume = 0.15;                                      // 벨소리 동안 배경음 줄이기
+      duck(true);                                             // 벨소리 동안 배경음 줄이기
       if (ring.paused) { ring.currentTime = 0; ring.play().catch(() => {}); }   // 이미 울리는 중이면 이어서
     } else if (!ring.paused) {
       ring.pause(); ring.currentTime = 0;
-      bgm.volume = 0.5;
+      duck(false);
     }
   }
 
@@ -402,15 +415,20 @@
     announce() {
       if (sprites.surprised) drawBus(sprites.surprised);      // 놀란 표정으로 교체
       if (muted) return;
-      bgm.volume = 0.15;                                      // 방송 동안 배경음 줄이기
+      duck(true);                                             // 방송 동안 배경음 줄이기
       announce.currentTime = 0;
       announce.play().catch(() => {});
-      announce.onended = () => { bgm.volume = 0.5; };
+      announce.onended = () => { duck(false); };
     },
     gate() {
       const fade = document.getElementById('fade');
       transitioning = true;                                   // 전환 중 클릭 무시
       fade.classList.add('on');                               // 암전
+      offBus = true;                                          // 내린 뒤엔 버스 환경음 다시 안 켬
+      const fadeOut = setInterval(() => {                     // 암전 동안 버스 환경음 서서히 줄이기
+        bgm.volume = Math.max(0, bgm.volume - 0.05);
+        if (bgm.volume <= 0) { clearInterval(fadeOut); bgm.pause(); }
+      }, 60);
       setTimeout(() => {
         stage.classList.add('at-gate');                       // 버스 → 정문으로 교체
         fade.classList.remove('on');                          // 밝아짐

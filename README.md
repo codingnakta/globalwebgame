@@ -45,7 +45,8 @@ prologue-bus/
    ├─ girl-back.png            # 정문 앞 소녀 뒷모습
    ├─ phone-call.png           # 전화 수신 화면
    ├─ school-hallway.png       # 학교 복도 (아직 미사용)
-   ├─ bus-stop.wav             # 정류장 배경음 (루프)
+   ├─ bus-stop.wav             # 버스 안 환경음 (루프, 정문 장면부터는 꺼짐)
+   ├─ kafka-on-the-shore.mp3   # 배경 음악 (루프, 장면 바뀌어도 계속)
    ├─ bus-announce.mp3         # 버스 안내 방송
    └─ reflection.mp3           # 전화 벨소리
 ```
